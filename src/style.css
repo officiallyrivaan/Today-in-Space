@@ -8,23 +8,26 @@
   --line: rgba(255,255,255,.08);
 }
 
-* { box-sizing: border-box; }
+*, *::before, *::after { box-sizing: border-box; }
 
 body {
   margin: 0;
-  min-height: 100vh;
   background: var(--bg);
   color: var(--ink);
   font-family: 'Space Mono', monospace;
-  position: relative;
+  min-height: 100vh;
   overflow-x: hidden;
+  position: relative;
 }
 
-/* faint star noise, not a gradient blob - keeps it from looking like every other ai hero */
+/* star dots - doing this instead of a gradient blob so it doesn't look like every other dark hero */
 body::before {
   content: '';
   position: fixed;
   inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  opacity: .35;
   background-image:
     radial-gradient(1px 1px at 20% 30%, #fff, transparent),
     radial-gradient(1px 1px at 70% 65%, #fff, transparent),
@@ -33,17 +36,14 @@ body::before {
     radial-gradient(1px 1px at 55% 45%, #fff, transparent),
     radial-gradient(1.5px 1.5px at 10% 90%, #fff, transparent);
   background-size: 600px 600px;
-  opacity: .35;
-  pointer-events: none;
-  z-index: 0;
 }
 
 .page {
-  position: relative;
-  z-index: 1;
   max-width: 900px;
   margin: 0 auto;
   padding: 2.5rem 1.5rem 4rem;
+  position: relative;
+  z-index: 1;
 }
 
 .topbar {
@@ -59,24 +59,28 @@ body::before {
   font-family: 'Orbitron', sans-serif;
   font-weight: 700;
   font-size: 1.1rem;
-  letter-spacing: .08em;
   text-transform: uppercase;
+  letter-spacing: .08em;
 }
-.brand .dot { color: var(--amber); }
+
+.brand .dot { color: var(--amber) }
 
 .datepicker {
   background: var(--bg-soft);
-  border: 1px solid var(--line);
   color: var(--ink);
+  border: 1px solid var(--line);
   font-family: 'Space Mono', monospace;
   font-size: .85rem;
   padding: .5rem .7rem;
   border-radius: 6px;
   color-scheme: dark;
 }
+
 .datepicker:focus { outline: 1px solid var(--cyan); }
 
-/* loading state */
+
+/* --- loading --- */
+
 .state-loading {
   display: flex;
   flex-direction: column;
@@ -85,50 +89,58 @@ body::before {
   padding: 5rem 0;
   color: var(--ink-dim);
 }
+
 .orbit {
-  width: 54px; height: 54px;
-  border: 1px dashed var(--line);
+  width: 54px;
+  height: 54px;
   border-radius: 50%;
+  border: 1px dashed var(--line);
   position: relative;
   animation: spin 3s linear infinite;
 }
+
 .planet {
   width: 9px; height: 9px;
-  background: var(--amber);
   border-radius: 50%;
-  position: absolute;
-  top: -4px; left: 50%;
-  margin-left: -4.5px;
+  background: var(--amber);
   box-shadow: 0 0 8px var(--amber);
+  position: absolute;
+  top: -4px;
+  left: 50%;
+  margin-left: -4.5px;
 }
-@keyframes spin { to { transform: rotate(360deg); } }
 
-/* error state */
+@keyframes spin { to { transform: rotate(360deg) } }
+
+
+/* --- error --- */
+
 .state-error {
   padding: 3rem 1.5rem;
+  border-radius: 10px;
   border: 1px solid rgba(255,107,107,.3);
   background: rgba(255,107,107,.05);
-  border-radius: 10px;
 }
+
 .error-title {
   font-family: 'Orbitron', sans-serif;
-  color: #ff6b6b;
-  margin: 0 0 .5rem;
-  text-transform: uppercase;
   font-size: .9rem;
+  color: #ff6b6b;
+  text-transform: uppercase;
   letter-spacing: .05em;
+  margin: 0 0 .5rem;
 }
-.error-message { margin: 0; color: var(--ink-dim); font-size: .9rem; }
 
-/* the card */
-.card {
-  display: grid;
-  gap: 1.75rem;
-}
+.error-message { margin: 0; font-size: .9rem; color: var(--ink-dim) }
+
+
+/* --- card --- */
+
+.card { display: grid; gap: 1.75rem }
 
 .media-wrap {
-  border-radius: 10px;
   overflow: hidden;
+  border-radius: 10px;
   border: 1px solid var(--line);
   background: #000;
 }
@@ -140,20 +152,21 @@ body::before {
   object-fit: contain;
   background: #000;
 }
+
 .media-frame {
   aspect-ratio: 16/9;
   height: auto;
   border: 0;
 }
 
-.info { display: grid; gap: .85rem; }
+.info { display: grid; gap: .85rem }
 
 .date {
   margin: 0;
   font-size: .75rem;
-  letter-spacing: .12em;
-  text-transform: uppercase;
   color: var(--cyan);
+  text-transform: uppercase;
+  letter-spacing: .12em;
 }
 
 h1 {
@@ -161,23 +174,23 @@ h1 {
   font-weight: 900;
   font-size: clamp(1.6rem, 4vw, 2.4rem);
   line-height: 1.15;
-  margin: 0;
   max-width: 22ch;
+  margin: 0;
 }
 
 .explanation {
-  margin: 0;
-  color: var(--ink-dim);
   font-size: .95rem;
   line-height: 1.7;
+  color: var(--ink-dim);
   max-width: 65ch;
+  margin: 0;
 }
 
 .copyright {
-  margin: 0;
   font-size: .75rem;
   color: var(--ink-dim);
   opacity: .7;
+  margin: 0;
 }
 
 .footer {
@@ -191,6 +204,6 @@ h1 {
 }
 
 @media (max-width: 600px) {
-  .topbar { flex-direction: column; align-items: flex-start; gap: 1rem; }
-  .datepicker { width: 100%; }
+  .topbar { flex-direction: column; align-items: flex-start; gap: 1rem }
+  .datepicker { width: 100% }
 }
