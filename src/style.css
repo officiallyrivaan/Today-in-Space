@@ -65,6 +65,29 @@ body::before {
 
 .brand .dot { color: var(--amber) }
 
+.controls {
+  display: flex;
+  align-items: center;
+  gap: .6rem;
+}
+
+.random-btn {
+  background: transparent;
+  border: 1px solid var(--line);
+  color: var(--ink-dim);
+  font-family: 'Space Mono', monospace;
+  font-size: .85rem;
+  padding: .5rem .8rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: border-color .15s, color .15s;
+}
+
+.random-btn:hover {
+  border-color: var(--amber);
+  color: var(--amber);
+}
+
 .datepicker {
   background: var(--bg-soft);
   color: var(--ink);
@@ -205,5 +228,7 @@ h1 {
 
 @media (max-width: 600px) {
   .topbar { flex-direction: column; align-items: flex-start; gap: 1rem }
+  .controls { width: 100% }
   .datepicker { width: 100% }
+  .random-btn { width: 100% }
 }

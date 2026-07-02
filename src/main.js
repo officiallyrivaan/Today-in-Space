@@ -1,4 +1,5 @@
 import './style.css';
+
 const API_KEY = import.meta.env.VITE_NASA_API_KEY;
 const APOD_URL = "https://api.nasa.gov/planetary/apod";
 
@@ -17,13 +18,23 @@ function todayISO() {
   return new Date().toISOString().split("T")[0];
 }
 
+function randomDate() {
+  const start = new Date("1995-06-16").getTime();
+  const end = new Date().getTime();
+  const random = new Date(start + Math.random() * (end - start));
+  return random.toISOString().split("T")[0];
+}
+
 function renderShell(selectedDate) {
   app.innerHTML = `
     <div class="page">
       <header class="topbar">
         <span class="brand">today in space<span class="dot">.</span></span>
-        <input type="date" id="datepicker" class="datepicker"
-          value="${selectedDate}" max="${todayISO()}" min="1995-06-16" />
+        <div class="controls">
+          <button id="randombtn" class="random-btn">random day</button>
+          <input type="date" id="datepicker" class="datepicker"
+            value="${selectedDate}" max="${todayISO()}" min="1995-06-16" />
+        </div>
       </header>
       <main id="content" class="content"></main>
       <footer class="footer">data from nasa apod api</footer>
@@ -33,15 +44,23 @@ function renderShell(selectedDate) {
   document.querySelector("#datepicker").addEventListener("change", (e) => {
     loadApod(e.target.value);
   });
+
+  document.querySelector("#randombtn").addEventListener("click", () => {
+    const date = randomDate();
+    document.querySelector("#datepicker").value = date;
+    loadApod(date);
+  });
 }
 
-function renderLoading() {
+function renderLoading(date) {
   const content = document.querySelector("#content");
   if (!content) return;
+  const isToday = date === todayISO();
+  const label = isToday ? "today's sky" : formatDate(date);
   content.innerHTML = `
     <div class="state-loading">
       <div class="orbit"><div class="planet"></div></div>
-      <p>fetching today's sky...</p>
+      <p>fetching ${label}...</p>
     </div>
   `;
 }
@@ -92,7 +111,7 @@ function renderApod(data) {
 }
 
 function loadApod(date) {
-  renderLoading();
+  renderLoading(date);
 
   if (!API_KEY) {
     renderError("missing VITE_NASA_API_KEY — check your .env file and restart the dev server.");
@@ -101,15 +120,11 @@ function loadApod(date) {
 
   fetch(`${APOD_URL}?api_key=${API_KEY}&date=${date}`)
     .then((response) => {
-      if (!response.ok) {
-        throw new Error(`api responded with ${response.status}`);
-      }
+      if (!response.ok) throw new Error(`api responded with ${response.status}`);
       return response.json();
     })
     .then((data) => {
-      if (data.error) {
-        throw new Error(data.error.message || "unknown api error");
-      }
+      if (data.error) throw new Error(data.error.message || "unknown api error");
       renderApod(data);
     })
     .catch((err) => {
